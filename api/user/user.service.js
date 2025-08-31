@@ -128,7 +128,7 @@ async function addLikeUser(loggedinUser, storyId) {
     try {
         const collection = await dbService.getCollection(collectionName)
         const user = await collection.findOne({
-            _id: new ObjectId(loggedinUser._id),
+            _id: ObjectId.createFromHexString(loggedinUser._id),
             likedStoryIds: storyId
         })
         let update
@@ -138,11 +138,11 @@ async function addLikeUser(loggedinUser, storyId) {
             update = { $addToSet: { likedStoryIds: storyId } }
         }
         const updated = await collection.findOneAndUpdate(
-            { _id: new ObjectId(loggedinUser._id) },
+            { _id: ObjectId.createFromHexString(loggedinUser._id) },
             update,
             { returnDocument: "after" }
         )
-        return updated.value.likedStoryIds
+        return updated
     } catch (err) {
         logger.error('cannot add like ', err)
         throw err

@@ -132,8 +132,7 @@ async function addLikeStory(user, storyId) {
 		imgUrl: user.imgUrl
 	}
 	const collection = await dbService.getCollection(collectionName)
-	// const criteria = { _id: ObjectId.createFromHexString(storyId) }
-	const story = await collection.findOne({ _id: new ObjectId(storyId), 'likedBy._id': user._id })
+	const story = await collection.findOne({ _id: ObjectId.createFromHexString(storyId), 'likedBy._id': user._id })
 	let update
 	if (story) {
 		update = { $pull: { likedBy: { _id: user._id } } }
@@ -142,11 +141,11 @@ async function addLikeStory(user, storyId) {
 
 	}
 	const updated = await collection.findOneAndUpdate(
-		{ _id: new ObjectId(storyId) },
+		{ _id: ObjectId.createFromHexString(storyId) },
 		update,
 		{ returnDocument: 'after' }
 	)
-	return updated.value.likedBy
+	return updated
 }
 
 async function addStoryMsg(storyId, msg) {

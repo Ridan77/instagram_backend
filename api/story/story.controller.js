@@ -97,8 +97,8 @@ export async function addLikeStory(req, res) {
 	try {
 		const storyId = req.params.storyId
 		const { loggedinUser } = req
-		const savedLikes = await storyService.addLikeStory(loggedinUser,storyId)
-		res.send(savedLikes)
+		const savedStory = await storyService.addLikeStory(loggedinUser,storyId)
+		res.send(savedStory)
 	} catch (err) {
 		logger.error('Failed to add like', err)
 		res.status(400).send({ err: 'Failed to add like' })

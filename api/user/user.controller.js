@@ -52,9 +52,9 @@ export async function userLike(req, res) {
     try {
         const storyId = req.params.storyId
         const { loggedinUser } = req
-        const storyLikes = await storyService.addLikeStory(loggedinUser, storyId)
-        const userLikes = await addLikeUser(loggedinUser, storyId)
-        res.send({ userLikes, storyLikes })
+        // const storyLikes = await storyService.addLikeStory(loggedinUser, storyId)
+        const user = await userService.addLikeUser(loggedinUser, storyId)
+        res.send(user)
     }
     catch (err) {
         logger.error('Failed to update user', err)
