@@ -76,10 +76,10 @@ async function remove(storyId) {
 
 async function add(story) {
 	try {
-		story.loc ={name:'Tel Aviv'}
-		story.comments=[]
-		story.likedBy=[]
-		story.tags=['music','festival', 'friends']
+		story.loc = { name: 'Tel Aviv' }
+		story.comments = []
+		story.likedBy = []
+		story.tags = ['music', 'festival', 'friends']
 		const collection = await dbService.getCollection(collectionName)
 		await collection.insertOne(story)
 
@@ -119,7 +119,7 @@ async function addStoryComment(storyId, comment) {
 			{ $push: { comments: comment } },
 			{ returnDocument: "after" }
 		)
-		return updatedDoc.comments[updatedDoc.comments.length-1]
+		return updatedDoc.comments[updatedDoc.comments.length - 1]
 	} catch (err) {
 		logger.error(`cannot add comment ${story._id}`, err)
 		throw err
@@ -179,11 +179,9 @@ async function removeStoryMsg(storyId, msgId) {
 }
 
 function _buildCriteria(filterBy) {
-	const criteria = {
-		txt: { $regex: filterBy.txt, $options: 'i' },
-		// speed: { $gte: filterBy.minSpeed },
-	}
-
+	const criteria={}
+	if (filterBy.txt) criteria.txt = { $regex: filterBy.txt, $options: 'i' }
+	if (filterBy.userId) criteria['by._id'] = filterBy.userId
 	return criteria
 }
 
