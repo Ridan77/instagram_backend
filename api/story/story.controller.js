@@ -84,8 +84,8 @@ export async function addStoryComment(req, res) {
 			txt: req.body.txt,
 			by: { _id, fullname, imgUrl },
 		}
-		const savedStory = await storyService.addStoryComment(storyId, comment)
-		res.send(savedStory)
+		const savedComment = await storyService.addStoryComment(storyId, comment)
+		res.send(savedComment)
 	} catch (err) {
 		logger.error('Failed to add comment', err)
 		res.status(400).send({ err: 'Failed to add comment' })

@@ -111,6 +111,7 @@ async function update(story) {
 async function addStoryComment(storyId, comment) {
 	try {
 		comment.id = makeId()
+		comment.createdAt = Date.now()
 		const criteria = { _id: ObjectId.createFromHexString(storyId) }
 		const collection = await dbService.getCollection(collectionName)
 		const updatedDoc = await collection.findOneAndUpdate(
@@ -118,7 +119,7 @@ async function addStoryComment(storyId, comment) {
 			{ $push: { comments: comment } },
 			{ returnDocument: "after" }
 		)
-		return updatedDoc
+		return updatedDoc.comments[updatedDoc.comments.length-1]
 	} catch (err) {
 		logger.error(`cannot add comment ${story._id}`, err)
 		throw err

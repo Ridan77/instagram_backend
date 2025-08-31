@@ -17,7 +17,7 @@ router.put('/:id', requireAuth, updateStory)
 router.delete('/:id', requireAuth, removeStory)
 router.delete('/:id', requireAuth,  removeStory) //requireAdmin
 
-router.post('/:storyId/comment', requireAuth, addStoryComment)
+router.post('/comment/:storyId', requireAuth, addStoryComment)
 router.post('/like/:storyId', requireAuth, addLikeStory)
 // router.post('/:id/msg', requireAuth, addStoryMsg)
 // router.delete('/:id/msg/:msgId', requireAuth, removeStoryMsg)
