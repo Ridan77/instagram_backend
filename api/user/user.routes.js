@@ -11,6 +11,6 @@ router.get('/:id', getUser)
 router.put('/:id', requireAuth, updateUser)
 router.delete('/:id', requireAuth, requireAdmin, deleteUser)
 router.post('/like/:storyId',requireAuth,userLike)
-router.post('/follow/:userToFollowId',requireAuth,toggleFollow)
+router.get('/follow/:userToFollowId',requireAuth,toggleFollow)
 
 export const userRoutes = router

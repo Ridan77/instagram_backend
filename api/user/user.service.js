@@ -153,11 +153,11 @@ async function addOrRemoveFollow(loggedinUser, userToFollowId) {
     try {
         const collection = await dbService.getCollection(collectionName)
         const user = await collection.findOne({
-            _id: new ObjectId(loggedinUser._id),
-            'following._id': new ObjectId(userToFollowId)
+            _id: ObjectId.createFromHexString(loggedinUser._id),
+            'following._id': ObjectId.createFromHexString(userToFollowId)
         })
         const mineMiniUser = { _id: loggedinUser._id, imgUrl: loggedinUser.imgUrl, fullname: loggedinUser.fullname }
-        const other = await collection.findOne({ _id: new ObjectId(userToFollowId) })
+        const other = await collection.findOne({ _id: ObjectId.createFromHexString(userToFollowId) })
         const otherMiniUser = { _id: other._id, imgUrl: other.imgUrl, fullname: other.fullname }
         let updateMe, updateOther
         if (user) {
@@ -168,17 +168,17 @@ async function addOrRemoveFollow(loggedinUser, userToFollowId) {
             updateOther = { $addToSet: { followers: mineMiniUser } }
         }
         const savedUser = await collection.findOneAndUpdate(
-            { _id: new ObjectId(loggedinUser._id) },
+            { _id: ObjectId.createFromHexString(loggedinUser._id) },
             updateMe,
             { returnDocument: "after" }
         )
         const savedFollowUser = await collection.findOneAndUpdate(
-            { _id: new ObjectId(userToFollowId) },
+            { _id: ObjectId.createFromHexString(userToFollowId) },
             updateOther,
             { returnDocument: "after" }
 
         )
-        return { savedUser: savedUser.value, savedFollowUser: savedFollowUser.value }
+        return { savedUser: savedUser, savedFollowUser: savedFollowUser }
     } catch (err) {
         logger.error('cannot follow or unfollow  ', err)
         console.log('cannot follow or unfollow  ', err)
