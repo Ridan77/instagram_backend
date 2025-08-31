@@ -14,7 +14,7 @@ export const userService = {
     query, // List (of users)
     getByUsername, // Used for Login
     addLikeUser,
-    toggleFollow,
+    addOrRemoveFollow,
 
 }
 
@@ -149,7 +149,7 @@ async function addLikeUser(loggedinUser, storyId) {
     }
 }
 
-async function toggleFollow(loggedinUser, userToFollowId) {
+async function addOrRemoveFollow(loggedinUser, userToFollowId) {
     try {
         const collection = await dbService.getCollection(collectionName)
         const user = await collection.findOne({

@@ -1,7 +1,7 @@
 import { logger } from '../../services/logger.service.js'
 import { storyService } from './story.service.js'
 
-export async function getStorys(req, res) {
+export async function getStories(req, res) {
 	try {
 		const filterBy = {
 			txt: req.query.txt || '',

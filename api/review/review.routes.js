@@ -11,4 +11,4 @@ router.get('/', log, getReviews)
 router.post('/',  log, requireAuth, addReview)
 router.delete('/:id',  requireAuth, deleteReview)
 
-export const reviewRoutes = router
+export const reviewRoutes   = router

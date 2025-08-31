@@ -36,8 +36,8 @@ app.all('*all', setupAsyncLocalStorage)
 
 app.use('/api/auth', authRoutes)
 app.use('/api/user', userRoutes)
-app.use('/api/review', reviewRoutes)
-app.use('/api/story', carRoutes)
+// app.use('/api/review', reviewRoutes)
+app.use('/api/story', storyRoutes)
 
 setupSocketAPI(server)
 

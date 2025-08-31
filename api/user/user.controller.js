@@ -67,7 +67,7 @@ export async function toggleFollow(req, res) {
     const { loggedinUser } = req
     const userToFollowId = req.params.userToFollowId
     try {
-        const users = await userService.toggleFollow(loggedinUser, userToFollowId)
+        const users = await userService.addOrRemoveFollow(loggedinUser, userToFollowId)
         res.send(users)
     } catch (err) {
         logger.error('Failed to update users', err)
