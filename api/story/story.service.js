@@ -76,7 +76,7 @@ async function remove(storyId) {
 
 async function add(story) {
 	try {
-		story.loc = { name: 'Tel Aviv' }
+		story.loc = story.loc ? story.loc  :{ name: 'Tel Aviv' }
 		story.comments = []
 		story.likedBy = []
 		story.tags = ['music', 'festival', 'friends']
