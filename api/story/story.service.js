@@ -20,18 +20,35 @@ export const storyService = {
 
 async function query(filterBy = { txt: '' }) {
 	try {
+		let stories
 		const criteria = _buildCriteria(filterBy)
 		const sort = _buildSort(filterBy)
-
 		const collection = await dbService.getCollection(collectionName)
-		var storyCursor = await collection.find(criteria, { sort })
+		if (filterBy.random) {
+			console.log('inside random' )
+			const pipeline = [
+				{ $match: criteria },
+				{ $addFields: { rand: { $rand: {} } } },
+				{ $sort: { rand: 1 } }
+			]
 
-		if (filterBy.pageIdx !== undefined) {
-			storyCursor.skip(filterBy.pageIdx * PAGE_SIZE).limit(PAGE_SIZE)
+			if (filterBy.pageIdx !== undefined) {
+				pipeline.push({ $skip: filterBy.pageIdx * PAGE_SIZE })
+				pipeline.push({ $limit: PAGE_SIZE })
+			}
+
+			stories = await collection.aggregate(pipeline).toArray()
+	
+
 		}
-
-		const storys = storyCursor.toArray()
-		return storys
+		else {
+			var storyCursor = collection.find(criteria, { sort })
+			if (filterBy.pageIdx !== undefined) {
+				storyCursor.skip(filterBy.pageIdx * PAGE_SIZE).limit(PAGE_SIZE)
+			}
+			stories = await storyCursor.toArray()
+		}
+		return stories
 	} catch (err) {
 		logger.error('cannot find storys', err)
 		throw err
@@ -76,7 +93,7 @@ async function remove(storyId) {
 
 async function add(story) {
 	try {
-		story.loc = story.loc ? story.loc  :{ name: 'Tel Aviv' }
+		story.loc = story.loc ? story.loc : { name: 'Tel Aviv' }
 		story.comments = []
 		story.likedBy = []
 		story.tags = ['music', 'festival', 'friends']
@@ -179,13 +196,15 @@ async function removeStoryMsg(storyId, msgId) {
 }
 
 function _buildCriteria(filterBy) {
-	const criteria={}
+	const criteria = {}
 	if (filterBy.txt) criteria.txt = { $regex: filterBy.txt, $options: 'i' }
 	if (filterBy.userId) criteria['by._id'] = filterBy.userId
 	return criteria
 }
 
 function _buildSort(filterBy) {
+
+	if (filterBy.random) { return { $rand: {} } }
 	if (!filterBy.sortField) return {}
 	return { [filterBy.sortField]: filterBy.sortDir }
 }

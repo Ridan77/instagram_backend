@@ -6,11 +6,13 @@ export async function getStories(req, res) {
 		const filterBy = {
 			txt: req.query.txt || '',
 			userId: req.query.userId || '',
+			random: req.query.random
 			// minSpeed: +req.query.minSpeed || 0,
 			// sortField: req.query.sortField || '',
 			// sortDir: req.query.sortDir || 1,
 			// pageIdx: req.query.pageIdx,
 		}
+		console.log('filterBy', req.query);
 		const stories = await storyService.query(filterBy)
 		res.json(stories)
 	} catch (err) {
