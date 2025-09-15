@@ -1,16 +1,17 @@
+import 'dotenv/config'
 import http from 'http'
 import path from 'path'
 import cors from 'cors'
 import express from 'express'
 import cookieParser from 'cookie-parser'
-
 import { authRoutes } from './api/auth/auth.routes.js'
 import { userRoutes } from './api/user/user.routes.js'
-// import { reviewRoutes } from './api/review/review.routes.js'
 import { storyRoutes } from './api/story/story.routes.js'
 import { setupSocketAPI } from './services/socket.service.js'
-
+import { logger } from './services/logger.service.js'
 import { setupAsyncLocalStorage } from './middlewares/setupAls.middleware.js'
+
+
 
 const app = express()
 const server = http.createServer(app)
@@ -36,7 +37,6 @@ app.all('*all', setupAsyncLocalStorage)
 
 app.use('/api/auth', authRoutes)
 app.use('/api/user', userRoutes)
-// app.use('/api/review', reviewRoutes)
 app.use('/api/story', storyRoutes)
 
 setupSocketAPI(server)
@@ -50,7 +50,6 @@ app.get('/*all', (req, res) => {
     res.sendFile(path.resolve('public/index.html'))
 })
 
-import { logger } from './services/logger.service.js'
 const port = process.env.PORT || 3030
 
 server.listen(port, () => {

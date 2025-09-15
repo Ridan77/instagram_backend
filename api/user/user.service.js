@@ -1,6 +1,5 @@
 import { dbService } from '../../services/db.service.js'
 import { logger } from '../../services/logger.service.js'
-import { reviewService } from '../review/review.service.js'
 import { ObjectId } from 'mongodb'
 import { toggleFollow } from './user.controller.js'
 
@@ -47,14 +46,7 @@ async function getById(userId) {
 
         criteria = { byUserId: userId }
 
-        user.givenReviews = await reviewService.query(criteria)
-        console.log(user.givenReviews)
-
-        user.givenReviews = user.givenReviews.map(review => {
-            delete review.byUser
-            return review
-        })
-
+    
         return user
     } catch (err) {
         logger.error(`while finding user by id: ${userId}`, err)

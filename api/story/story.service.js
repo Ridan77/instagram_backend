@@ -36,10 +36,7 @@ async function query(filterBy = { txt: '' }) {
 				pipeline.push({ $skip: filterBy.pageIdx * PAGE_SIZE })
 				pipeline.push({ $limit: PAGE_SIZE })
 			}
-
 			stories = await collection.aggregate(pipeline).toArray()
-	
-
 		}
 		else {
 			var storyCursor = collection.find(criteria, { sort })
