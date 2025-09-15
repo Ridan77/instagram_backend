@@ -23,10 +23,8 @@ async function query(filterBy = {}) {
         const collection = await dbService.getCollection(collectionName)
         var users = await collection.find(criteria).toArray()
         users = users.map(user => {
-            delete user.password
+            delete user.password 
             user.createdAt = user._id.getTimestamp()
-            // Returning fake fresh data
-            // user.createdAt = Date.now() - (1000 * 60 * 60 * 24 * 3) // 3 days ago
             return user
         })
         return users
@@ -46,7 +44,7 @@ async function getById(userId) {
 
         criteria = { byUserId: userId }
 
-    
+
         return user
     } catch (err) {
         logger.error(`while finding user by id: ${userId}`, err)
