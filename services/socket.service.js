@@ -1,5 +1,5 @@
-import {logger} from './logger.service.js'
-import {Server} from 'socket.io'
+import { logger } from './logger.service.js'
+import { Server } from 'socket.io'
 
 var gIo = null
 
@@ -14,14 +14,16 @@ export function setupSocketAPI(http) {
         socket.on('disconnect', socket => {
             logger.info(`Socket disconnected [id: ${socket.id}]`)
         })
-        socket.on('chat-set-topic', topic => {
-            if (socket.myTopic === topic) return
+        socket.on('chat-set-topic', topicAndUser => {
+            if (socket.myTopic ===topicAndUser.topic) return
             if (socket.myTopic) {
                 socket.leave(socket.myTopic)
                 logger.info(`Socket is leaving topic ${socket.myTopic} [id: ${socket.id}]`)
             }
-            socket.join(topic)
-            socket.myTopic = topic
+            socket.join(topicAndUser.topic)
+            socket.myTopic = topicAndUser.topic
+            socket.userId = topicAndUser.userId
+
         })
         socket.on('chat-send-msg', msg => {
             logger.info(`New chat msg from socket [id: ${socket.id}], emitting to topic ${socket.myTopic}`)
@@ -42,6 +44,14 @@ export function setupSocketAPI(http) {
             logger.info(`Removing socket.userId for socket [id: ${socket.id}]`)
             delete socket.userId
         })
+        socket.on('user-typing', msg => {
+            // gIo.to(socket.myTopic).emit('user-typing', msg)
+            broadcast({ type: 'user-typing', data: msg, room: socket.myTopic, userId: socket.userId })
+        })
+        socket.on('user-stop-typing', msg => {
+            // gIo.to(socket.myTopic).emit('user-typing', msg)
+            broadcast({ type: 'user-stop-typing', data: msg, room: socket.myTopic, userId: socket.userId })
+        })
 
     })
 }
@@ -58,7 +68,7 @@ async function emitToUser({ type, data, userId }) {
     if (socket) {
         logger.info(`Emiting event: ${type} to user: ${userId} socket [id: ${socket.id}]`)
         socket.emit(type, data)
-    }else {
+    } else {
         logger.info(`No active socket for user: ${userId}`)
         // _printSockets()
     }
@@ -68,7 +78,7 @@ async function emitToUser({ type, data, userId }) {
 // Optionally, broadcast to a room / to all
 async function broadcast({ type, data, room = null, userId }) {
     userId = userId.toString()
-    
+
     logger.info(`Broadcasting event: ${type}`)
     const excludedSocket = await _getUserSocket(userId)
     if (room && excludedSocket) {
@@ -110,9 +120,9 @@ export const socketService = {
     // set up the sockets service and define the API
     setupSocketAPI,
     // emit to everyone / everyone in a specific room (label)
-    emitTo, 
+    emitTo,
     // emit to a specific user (if currently active in system)
-    emitToUser, 
+    emitToUser,
     // Send to all sockets BUT not the current socket - if found
     // (otherwise broadcast to a room / to all)
     broadcast,
