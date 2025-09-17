@@ -106,14 +106,12 @@ async function add(story) {
 }
 
 async function update(story) {
-	// const storyToSave = { vendor: story.vendor, speed: story.speed }
-
 	try {
 		const criteria = { _id: ObjectId.createFromHexString(story._id) }
-
+		
 		const collection = await dbService.getCollection(collectionName)
-		await collection.updateOne(criteria, { $set: story })
-
+		const {_id, ...storyDate} = story
+		await collection.updateOne(criteria, { $set: storyDate })
 		return story
 	} catch (err) {
 		logger.error(`cannot update story ${story._id}`, err)

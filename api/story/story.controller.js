@@ -12,7 +12,7 @@ export async function getStories(req, res) {
 			// sortDir: req.query.sortDir || 1,
 			// pageIdx: req.query.pageIdx,
 		}
-		console.log('filterBy', filterBy);
+		console.log('filterBy', filterBy)
 		const stories = await storyService.query(filterBy)
 		res.json(stories)
 	} catch (err) {
@@ -49,7 +49,6 @@ export async function addStory(req, res) {
 export async function updateStory(req, res) {
 	const { loggedinUser, body: story } = req
 	const { _id: userId } = loggedinUser
-
 	if (story.by._id !== userId) {
 		res.status(403).send('Not your story...')
 		return
@@ -65,10 +64,17 @@ export async function updateStory(req, res) {
 }
 
 export async function removeStory(req, res) {
+	const { loggedinUser } = req
+	const storyId = req.params.id
 	try {
-		const storyId = req.params.id
+		const story = await storyService.getById(storyId)
+		console.log('story',story);
+		
+		if (story.by._id !== loggedinUser._id ) {
+			res.status(403).send('Not your story to remove...')
+			return
+		}
 		const removedId = await storyService.remove(storyId)
-
 		res.send(removedId)
 	} catch (err) {
 		logger.error('Failed to remove story', err)
@@ -99,7 +105,7 @@ export async function addLikeStory(req, res) {
 	try {
 		const storyId = req.params.storyId
 		const { loggedinUser } = req
-		const savedStory = await storyService.addLikeStory(loggedinUser,storyId)
+		const savedStory = await storyService.addLikeStory(loggedinUser, storyId)
 		res.send(savedStory)
 	} catch (err) {
 		logger.error('Failed to add like', err)
