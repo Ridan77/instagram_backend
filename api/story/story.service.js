@@ -6,7 +6,7 @@ import { dbService } from '../../services/db.service.js'
 import { asyncLocalStorage } from '../../services/als.service.js'
 
 const PAGE_SIZE = 3
-const collectionName = 'story'
+const collectionName = 'story1'
 
 export const storyService = {
 	remove,
