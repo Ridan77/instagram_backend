@@ -132,6 +132,7 @@ async function addLikeUser(loggedinUser, storyId) {
             update,
             { returnDocument: "after" }
         )
+        delete updated.password
         return updated
     } catch (err) {
         logger.error('cannot add like ', err)
