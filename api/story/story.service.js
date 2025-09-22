@@ -19,7 +19,7 @@ export const storyService = {
 }
 
 async function query(filterBy = { txt: '' }) {
-	// delete filterBy.random //just for dev
+	delete filterBy.random //just for dev
 	try {
 		let stories
 		const criteria = _buildCriteria(filterBy)
