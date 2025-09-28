@@ -27,9 +27,12 @@ export function setupSocketAPI(http) {
         })
         socket.on('chat-send-msg', msg => {
             logger.info(`New chat msg from socket [id: ${socket.id}], emitting to topic ${socket.myTopic}`)
+            console.log('msg.sender,msg.txt', msg.from,msg.txt);//for debug
+            _printSockets()
             // emits to all sockets:
             // gIo.emit('chat addMsg', msg)
             // emits only to sockets in the same room
+
             gIo.to(socket.myTopic).emit('chat-add-msg', msg)
         })
         socket.on('user-watch', userId => {
@@ -82,7 +85,7 @@ async function broadcast({ type, data, room = null, userId }) {
     logger.info(`Broadcasting event: ${type}`)
     const excludedSocket = await _getUserSocket(userId)
     if (room && excludedSocket) {
-        logger.info(`Broadcast to room ${room} excluding user: ${userId}`)
+        logger.info(`Broadcast to room ${room} excluding user: ${userId}, data:${data.sender}`)
         excludedSocket.broadcast.to(room).emit(type, data)
     } else if (excludedSocket) {
         logger.info(`Broadcast to all excluding user: ${userId}`)
