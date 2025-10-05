@@ -25,8 +25,29 @@ async function query(filterBy = { txt: '' }) {
 		const criteria = _buildCriteria(filterBy)
 		const sort = _buildSort(filterBy)
 		const collection = await dbService.getCollection(collectionName)
+		if (filterBy.userIdSavedStories) {
+			const userId = filterBy.userIdSavedStories
+			const usersCollection = await dbService.getCollection('user')
+			const user = await usersCollection.findOne({ _id: ObjectId.createFromHexString(userId) })
+
+			if (!user || !user.savedStories?.length) return []
+
+			const storyIds = user.savedStories.map(id => ObjectId.createFromHexString(id))
+			console.log('storyIds', storyIds);
+			const collection = await dbService.getCollection(collectionName)
+			const pipeline = [
+				{ $match: { _id: { $in: storyIds } } },
+			]
+
+			if (filterBy.pageIdx !== undefined) {
+				pipeline.push({ $skip: filterBy.pageIdx * PAGE_SIZE })
+				pipeline.push({ $limit: PAGE_SIZE })
+			}
+
+			stories = await collection.aggregate(pipeline).toArray()
+			return stories
+		}
 		if (filterBy.random) {
-			console.log('inside random' )
 			const pipeline = [
 				{ $match: criteria },
 				{ $addFields: { rand: { $rand: {} } } },
@@ -108,9 +129,9 @@ async function add(story) {
 async function update(story) {
 	try {
 		const criteria = { _id: ObjectId.createFromHexString(story._id) }
-		
+
 		const collection = await dbService.getCollection(collectionName)
-		const {_id, ...storyDate} = story
+		const { _id, ...storyDate } = story
 		await collection.updateOne(criteria, { $set: storyDate })
 		return story
 	} catch (err) {
