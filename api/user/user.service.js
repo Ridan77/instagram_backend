@@ -14,6 +14,7 @@ export const userService = {
     getByUsername, // Used for Login
     addLikeUser,
     addOrRemoveFollow,
+    saveOrUnsaveStory,
 
 }
 
@@ -23,7 +24,7 @@ async function query(filterBy = {}) {
         const collection = await dbService.getCollection(collectionName)
         var users = await collection.find(criteria).toArray()
         users = users.map(user => {
-            delete user.password 
+            delete user.password
             user.createdAt = user._id.getTimestamp()
             return user
         })
@@ -101,7 +102,6 @@ async function add(user) {
             fullname: user.fullname,
             imgUrl: user.imgUrl,
             isAdmin: user.isAdmin,
-            score: 100,
         }
         const collection = await dbService.getCollection(collectionName)
         await collection.insertOne(userToAdd)
@@ -173,6 +173,28 @@ async function addOrRemoveFollow(loggedinUser, userToFollowId) {
     } catch (err) {
         logger.error('cannot follow or unfollow  ', err)
         console.log('cannot follow or unfollow  ', err)
+        throw err
+    }
+}
+
+async function saveOrUnsaveStory(loggedinUser, storyIdToSave) {
+    try {
+        const collection = await dbService.getCollection(collectionName)
+        const user = await collection.findOne({ _id: ObjectId.createFromHexString(loggedinUser._id) })
+        if (!user.savedStories) user.savedStories = []
+        const storyIdx = user.savedStories.findIndex(id => id === storyIdToSave)
+        if (storyIdx !== -1) user.savedStories.splice(storyIdx, 1)
+        else user.savedStories.push(storyIdToSave)
+        const updatedUser = await collection.findOneAndUpdate(
+            { _id: user._id },
+            { $set: { savedStories: user.savedStories } },
+            { returnDocument: 'after' }
+        )
+        delete updatedUser.password
+        return updatedUser
+    } catch (err) {
+        logger.error('cannot save story  ', err)
+        console.log('cannot save story  ', err)
         throw err
     }
 }

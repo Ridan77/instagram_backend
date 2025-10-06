@@ -75,6 +75,16 @@ export async function toggleFollow(req, res) {
 }
 
 
-
+export async function toggleSave(req, res) {
+    const { loggedinUser } = req
+    const storyIdToSave = req.params.storyIdToSave
+    try {
+        const user = await userService.saveOrUnsaveStory(loggedinUser, storyIdToSave)
+        res.send(user)
+    } catch (err) {
+        logger.error('Failed to save story', err)
+        res.status(400).send({ err: 'Failed to save story' })
+    }
+}
 
 
