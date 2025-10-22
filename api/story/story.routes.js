@@ -15,11 +15,9 @@ router.get('/:id', log, getStoryById)
 router.post('/', log, requireAuth, addStory)
 router.put('/:id', requireAuth, updateStory)
 router.delete('/:id', requireAuth, removeStory)
-router.delete('/:id', requireAuth,  removeStory) //requireAdmin
+router.delete('/:id', requireAuth,  removeStory)
 
 router.post('/comment/:storyId', requireAuth, addStoryComment)
 router.post('/like/:storyId', requireAuth, addLikeStory)
-// router.post('/:id/msg', requireAuth, addStoryMsg)
-// router.delete('/:id/msg/:msgId', requireAuth, removeStoryMsg)
 
 export const storyRoutes = router

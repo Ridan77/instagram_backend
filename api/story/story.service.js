@@ -36,7 +36,7 @@ async function query(filterBy = { txt: '' }) {
 			console.log('storyIds', storyIds);
 			const collection = await dbService.getCollection(collectionName)
 			const pipeline = [
-				{ $match: { _id: { $in: storyIds } } },
+				{ $match: { _id: { $in: storyIds },...criteria } },
 			]
 
 			if (filterBy.pageIdx !== undefined) {
@@ -97,8 +97,6 @@ async function remove(storyId) {
 		const criteria = {
 			_id: ObjectId.createFromHexString(storyId),
 		}
-		// if (!isAdmin) criteria['owner._id'] = ownerId
-
 		const collection = await dbService.getCollection(collectionName)
 		const res = await collection.deleteOne(criteria)
 

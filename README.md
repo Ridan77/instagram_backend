@@ -1,143 +1,89 @@
-# Coding Academy Backend Starter
+# 🧩 InstaStam Backend
 
-A Node.js backend service supporting the Coding Academy E2E starter project. This service provides RESTful APIs, real-time WebSocket functionality, and MongoDB integration.
+![Node.js](https://img.shields.io/badge/node-%3E%3D16-green)
+![Express](https://img.shields.io/badge/express-4.x-lightgrey)
+![MongoDB](https://img.shields.io/badge/database-MongoDB-green)
+![Socket.io](https://img.shields.io/badge/realtime-Socket.io-blue)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-## 🚀 Quick Start
+**InstaStam Backend** powers the server-side logic for the InstaStam full-stack social media platform — providing **REST APIs**, **real-time communication**, **authentication**, and **media uploads**.
 
-1. Install dependencies:
-```bash
-npm install
+## It’s built with **Node.js**, **Express**, and **MongoDB**, with live updates via **Socket.io**
+
+## 🌍 Live API
+
+🔗 [InstaStam on Render](https://instastam.onrender.com/story)  
+🔗 [Frontend Repository](https://github.com/Ridan77/instgram_frontend)
+
+---
+
+## ⚙️ Tech Stack
+
+- **Node.js** + **Express.js** – RESTful API & middleware
+- **MongoDB** – NoSQL database & schemas
+- **Socket.io** – Real-time chat and notifications
+- **JWT** – Authentication and route protection
+- **bcrypt** – Secure password hashing
+- **dotenv** – Environment configuration
+- **CORS** – Cross-origin request handling
+
+---
+
+## 🧱 Architecture Overview
+
+The backend is designed for **clean modularity** and **scalability**:
+
+```plaintext
+backend/
+├── api/
+│   ├── auth/         # Login, signup, logout routes
+│   ├── user/         # User CRUD, follow/unfollow, profile
+│   └── story/        # Story & post management
+│
+├── services/
+│   ├── auth.service.js
+│   ├── user.service.js
+│   ├── als.service.js
+│   ├── logger.service.js
+│   ├── db.service.js
+│   └── socket.service.js
+│
+├── sockets/
+│   └── socket.service.js      # Handles connections and rooms
+│
+├── app.js                     # Express app setup
+└── server.js                  # Entry point (with Socket.io)
+
 ```
 
-2. Start the server:
-```bash
-npm run dev     # Development mode with hot reload
-npm start       # Production mode
-```
+## 🧱 Architecture Overview
 
-## 📡 API Endpoints
+User signup/login → credentials verified via bcrypt
 
-### Cars API
-- `GET /api/car` - Get all cars with optional filtering
-- `GET /api/car/:id` - Get car by ID
-- `POST /api/car` - Create new car
-- `PUT /api/car/:id` - Update car
-- `DELETE /api/car/:id` - Delete car
-- `POST /api/car/:id/msg` - Add message to car
+JWT token issued and stored in localStorage (frontend)
 
-### Users API
-- `POST /api/auth/signup` - Register new user
-- `POST /api/auth/login` - Login user
-- `POST /api/auth/logout` - Logout user
-- `GET /api/user` - Get all users
-- `GET /api/user/:id` - Get user by ID
+Protected routes verified using middleware on each request
 
-### Reviews API
-- `GET /api/review` - Get all reviews
-- `POST /api/review` - Create new review
-- `DELETE /api/review/:id` - Delete review
+---
 
-## 🏗️ Project Structure
+| Method        | Endpoint                | Description                        |
+| ------------- | ----------------------- | ---------------------------------- |
+| **POST**      | `/api/auth/login`       | Authenticate user & return JWT     |
+| **POST**      | `/api/auth/signup`      | Register new user                  |
+| **GET**       | `/api/user`             | Get all users                      |
+| **GET**       | `/api/user/:id`         | Get user by ID                     |
+| **POST**      | `/api/story`            | Create new story/post              |
+| **GET**       | `/api/story`            | Get feed stories                   |
+| **GET**       | `/api/story/:id`        | Get single story                   |
+| **DELETE**    | `/api/story/:id`        | Delete a story                     |
+| **POST**      | `/api/comment/:storyId` | Add comment to story               |
+| **POST**      | `/api/like/:storyId`    | Add like to story                  |
+| **Socket.io** | `/socket.io`            | Real-time mesaging & notifications |
 
-```
-api/
-├── auth/         # Authentication routes and logic
-├── user/         # User management
-├── car/          # Car CRUD operations
-└── review/       # Review system
-services/
-├── db.service.js       # Database connectivity
-├── socket.service.js   # WebSocket functionality
-├── logger.service.js   # Logging utility
-└── util.service.js     # Helper functions
-middlewares/
-├── requireAuth.js      # Authentication middleware
-└── setupAls.js        # Async local storage setup
-```
+---
 
-## 💾 Database Schema
 
-### Car Collection
-```js
-{
-  vendor: String,
-  speed: Number,
-  owner: { type: ObjectId, ref: 'User' },
-  msgs: [{
-    id: String,
-    txt: String,
-    by: { _id, fullname }
-  }]
-}
-```
+## 📜 License
 
-### User Collection
-```js
-{
-  username: String,
-  password: String,
-  fullname: String,
-  score: Number,
-  isAdmin: Boolean
-}
-```
-
-### Review Collection
-```js
-{
-  txt: String,
-  byUserId: ObjectId,
-  aboutUserId: ObjectId
-}
-```
-
-## 🔒 Authentication
-
-Uses JWT (JSON Web Tokens) for stateless authentication. Tokens are stored in cookies and validated through middleware.
-
-## 🔌 WebSocket Events
-
-- `user-watch` - User status updates
-- `chat-new-msg` - New chat messages
-- `review-about-you` - New review notifications
-- `review-added` - Review created
-- `review-removed` - Review deleted
-
-## 🛠️ Development
-
-### Error Handling
-```js
-try {
-  // Your code
-} catch (err) {
-  logger.error('Failed to do something', err)
-  throw err
-}
-```
-
-### Async Local Storage
-Used for tracking request context, especially for logging and user sessions.
-
-## 📝 Logging
-
-Logs are stored in the `/logs` directory with the following levels:
-- DEBUG - Development information
-- INFO - General application events
-- WARN - Warning conditions
-- ERROR - Error events
-
-## 🔥 Production Deployment
-
-1. Set production environment variables
-2. Build the frontend:
-```bash
-cd ../frontend-react && npm run build
-```
-3. Start the server:
-```bash
-npm start
-```
-
-## 📄 License
-
-Coding Academy - Built with ❤️ for teaching modern fullstack development
+Distributed under the **MIT License**.  
+Built with ❤️ by **Dan Ribak** as part of the **Coding Academy Final Project**.

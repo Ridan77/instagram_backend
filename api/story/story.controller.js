@@ -12,7 +12,6 @@ export async function getStories(req, res) {
 			// sortDir: req.query.sortDir || 1,
 			// pageIdx: req.query.pageIdx,
 		}
-		console.log('filterBy', filterBy)
 		const stories = await storyService.query(filterBy)
 		res.json(stories)
 	} catch (err) {
